@@ -9,27 +9,28 @@ class About extends StatefulWidget {
 class _AboutState extends State<About> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 25.0, right: 25.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "HAKKINDA",
+    return AlertDialog(
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.pop(context, 'OK'),
+          child: const Text(
+            'TAMAM',
             style: TextStyle(
-                color: Style.Colors.secondColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 25),
+              color: Style.Colors.secondColor,
+            ),
           ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Text(
-            "Bu uygulama Dr. Öğretim Üyesi Ahmet Cevahir ÇINAR tarafından yürütülen 3311456 kodlu MOBİL PROGRAMLAMA dersi kapsamında 193311063 numaralı Recep Tarık Turan adlı öğrenci tarafından 30 Nisan 2021 günü yapılmıştır.",
-            style: TextStyle(color: Style.Colors.titleColor),
-            textAlign: TextAlign.center,
-          ),
-        ],
+        ),
+      ],
+      title: Text(
+        "HAKKINDA",
+        style: TextStyle(
+            color: Style.Colors.secondColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 25),
+      ),
+      content: Text(
+        "Bu uygulama Dr. Öğretim Üyesi Ahmet Cevahir ÇINAR tarafından yürütülen 3311456 kodlu MOBİL PROGRAMLAMA dersi kapsamında 193311063 numaralı Recep Tarık Turan adlı öğrenci tarafından 25 Haziran 2021 günü yapılmıştır.",
+        style: TextStyle(color: Style.Colors.titleColor),
       ),
     );
   }

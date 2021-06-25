@@ -2,6 +2,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:movieapp/screens/detail_screen.dart';
+import 'package:movieapp/services/db.dart';
 import '../bloc/search_movies_bloc.dart';
 import '../model/movie.dart';
 import '../model/movie_response.dart';
@@ -14,6 +15,7 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   var stream = searchMoviesBloc.subject.stream;
+  DatabaseService _databaseService = DatabaseService();
 
   @override
   void initState() {
@@ -49,8 +51,7 @@ class _SearchBarState extends State<SearchBar> {
           height: 25.0,
           width: 25.0,
           child: CircularProgressIndicator(
-            valueColor:
-                new AlwaysStoppedAnimation<Color>(Style.Colors.secondColor),
+            valueColor: new AlwaysStoppedAnimation<Color>(Style.Colors.secondColor),
             strokeWidth: 4.0,
           ),
         )
@@ -92,8 +93,7 @@ class _SearchBarState extends State<SearchBar> {
 
   Widget _buildFloatingSearchBar(MovieResponse data) {
     List<Movie> movies = data.movies;
-    final isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
+    final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
     return FloatingSearchBar(
       hint: 'Film ara...',
@@ -136,84 +136,79 @@ class _SearchBarState extends State<SearchBar> {
               mainAxisSize: MainAxisSize.min,
               children: movies.take(10).map((movie) {
                 return Container(
-                    child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                MovieDetailScreen(movie: movie)));
-                  },
-                  child: Row(
-                    children: [
-                      movie.poster == null
-                          ? Container(
-                              margin: EdgeInsets.all(3.0),
-                              width: 60.0,
-                              height: 90.0,
-                              decoration: BoxDecoration(
-                                  color: Style.Colors.secondColor,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(2.0)),
-                                  shape: BoxShape.rectangle),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(
-                                    EvaIcons.filmOutline,
-                                    color: Colors.white,
-                                    size: 50.0,
-                                  )
-                                ],
+                    child: Draggable(
+                      feedback: Icon(Icons.favorite,color: Colors.red,),
+                        onDragStarted: () async {
+                          await _databaseService.addToFavorite(movie.id.toString());
+                        },
+                  child: GestureDetector(
+                    /* onHorizontalDragStart: (DragStartDetails details) {
+                      print("Beni kaydırdılar");
+                    }, */
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MovieDetailScreen(movie: movie)));
+                    },
+                    child: Row(
+                      children: [
+                        movie.poster == null
+                            ? Container(
+                                margin: EdgeInsets.all(3.0),
+                                width: 60.0,
+                                height: 90.0,
+                                decoration: BoxDecoration(
+                                    color: Style.Colors.secondColor,
+                                    borderRadius: BorderRadius.all(Radius.circular(2.0)),
+                                    shape: BoxShape.rectangle),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      EvaIcons.filmOutline,
+                                      color: Colors.white,
+                                      size: 50.0,
+                                    )
+                                  ],
+                                ),
+                              )
+                            : Container(
+                                margin: EdgeInsets.all(3.0),
+                                width: 60.0,
+                                height: 90.0,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(2.0)),
+                                    shape: BoxShape.rectangle,
+                                    image: DecorationImage(
+                                        image: NetworkImage("https://image.tmdb.org/t/p/w200/" + movie.poster), fit: BoxFit.cover)),
                               ),
-                            )
-                          : Container(
-                              margin: EdgeInsets.all(3.0),
-                              width: 60.0,
-                              height: 90.0,
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(2.0)),
-                                  shape: BoxShape.rectangle,
-                                  image: DecorationImage(
-                                      image: NetworkImage(
-                                          "https://image.tmdb.org/t/p/w200/" +
-                                              movie.poster),
-                                      fit: BoxFit.cover)),
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              movie.title.length > 30 ? '${movie.title.substring(0, 30)}...' : movie.title,
+                              style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                             ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            movie.title.length > 30
-                                ? '${movie.title.substring(0, 30)}...'
-                                : movie.title,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 5.0,
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                EvaIcons.star,
-                                size: 16.0,
-                                color: Style.Colors.secondColor,
-                              ),
-                              Text(movie.rating.toString())
-                            ],
-                          )
-                        ],
-                      ),
-                    ],
+                            SizedBox(
+                              height: 5.0,
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  EvaIcons.star,
+                                  size: 16.0,
+                                  color: Style.Colors.secondColor,
+                                ),
+                                Text(movie.rating.toString())
+                              ],
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ));
               }).toList(),

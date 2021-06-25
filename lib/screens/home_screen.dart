@@ -2,6 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:movieapp/screens/discover_screen.dart';
+import 'package:movieapp/screens/profile_screen.dart';
 import 'package:movieapp/style/theme.dart' as Style;
 import 'package:movieapp/widgets/about.dart';
 import 'package:movieapp/widgets/genres.dart';
@@ -23,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  final tabs = [
+ final tabs = [
     DiscoverScreen(),
     ListView(
       children: <Widget>[
@@ -33,9 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
         TopMovies()
       ],
     ),
-    About()
+    ProfileScreen()
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
         items: <Widget>[
           Icon(EvaIcons.search, size: 30),
           Icon(EvaIcons.home, size: 30),
-          Icon(EvaIcons.info, size: 30),
+          Icon(EvaIcons.person, size: 30),
         ],
         onTap: (index) {
           setState(() {

@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:movieapp/model/cast_response.dart';
 import 'package:movieapp/model/genre_response.dart';
+import 'package:movieapp/model/movie.dart';
 import 'package:movieapp/model/movie_detail_response.dart';
 import 'package:movieapp/model/movie_response.dart';
 import 'package:movieapp/model/person_response.dart';
@@ -195,4 +196,22 @@ class MovieRepository {
     }
     // /movie/{movie_id}/recommendations
   }
+
+  Future<Object> getMovieById(int movieId) async {
+    var params = {"api_key": apiKey, "language": "tr-TR", "movie_id": movieId};
+    var url = '$movieUrl/$movieId';
+    try {
+      Response response = await _dio.get(url, queryParameters: params);
+      var data = await response.data;
+
+      Movie movie = Movie(movieId, data["popularity"].toDouble(), data["title"], data["backdrop_path"], data["poster_path"],
+          data["overview"], data["vote_average"].toDouble());
+      return movie;
+    } catch (error, stacktrace) {
+      print("Exception occured: $error stackTrace: $stacktrace");
+      return MovieResponse.withError("$error");
+    }
+  }
+
+
 }

@@ -6,6 +6,7 @@ import 'package:movieapp/model/movie.dart';
 import 'package:movieapp/model/movie_response.dart';
 import 'package:movieapp/screens/detail_screen.dart';
 import 'package:movieapp/style/theme.dart' as Style;
+import 'package:movieapp/widgets/fav_popup.dart';
 
 class TopMovies extends StatefulWidget {
   @override
@@ -102,6 +103,15 @@ class _TopMoviesState extends State<TopMovies> {
               return Padding(
                 padding: EdgeInsets.only(top: 10.0, bottom: 10.0, right: 10.0),
                 child: GestureDetector(
+                  onLongPress: () async {
+                    await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return FavPopUp(movieName: movies[index].title, movieId: movies[index].id.toString(),);
+                        });
+
+                    //await _databaseService.addToFavorite(movies[index].id.toString());
+                  },
                   onTap: () {
                     Navigator.push(
                         context,
